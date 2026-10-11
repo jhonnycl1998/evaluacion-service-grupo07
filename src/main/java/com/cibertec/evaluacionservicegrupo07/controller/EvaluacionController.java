@@ -1,9 +1,13 @@
 package com.cibertec.evaluacionservicegrupo07.controller;
+import com.cibertec.evaluacionservicegrupo07.dto.ConfiguracionDTO;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 import com.cibertec.evaluacionservicegrupo07.dto.ScoringRiesgoDTO;
 
 @RestController
 @RequestMapping("/api/v1/evaluaciones")
+@RefreshScope
 public class EvaluacionController {
 
     @GetMapping("/scoring/{clienteId}")
@@ -20,5 +24,21 @@ public class EvaluacionController {
     @GetMapping("/cliente/{clienteId}")
     public ScoringRiesgoDTO getCliente(@PathVariable Long clienteId) {
         return getScoring(clienteId);
+    }
+
+
+    @Value("${fintech.scoring-minimo-aprobacion}")
+    private String minimoAprobacion;
+    @Value("${fintech.factor-endeudamiento-max}")
+    private String factorEndeudamientoMax;
+    @Value("${fintech.mensaje-riesgos}")
+    private String mensajeRiesgos;
+    @Value("${spring.datasource.url}")
+    private String datasourceUrl;
+    @GetMapping("/configuracion")
+    public ConfiguracionDTO configuracion(){
+        return new ConfiguracionDTO(minimoAprobacion,factorEndeudamientoMax,
+                mensajeRiesgos,datasourceUrl);
+
     }
 }
